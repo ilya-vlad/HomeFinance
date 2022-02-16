@@ -16,10 +16,10 @@ namespace API.Tests
 
         public IGenericRepository<OperationCategory> Categories => _categories;
 
-        public UnitOfWorkFake(List<Operation> operations, List<OperationCategory> categories)
+        public UnitOfWorkFake(TestData data)
         {
-            _operations = new RepositoryFake<Operation>(operations);
-            _categories = new RepositoryFake<OperationCategory>(categories);
+            _operations = new RepositoryFake<Operation>(data.Operations);
+            _categories = new RepositoryFake<OperationCategory>(data.Categories);
         }
 
         public void Dispose()

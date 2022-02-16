@@ -29,14 +29,13 @@ namespace API.Controllers
                 return NotFound();
             }
             
-            return Ok(GetOperationsResult(operations));
+            return Ok(GetOperationReport(operations));
         }
-
 
         [HttpGet("Range")]
         public IActionResult GetRangeOperations(DateTime from, DateTime to)
         {
-            if (from == default || to == default)
+            if (from == default || to == default || from > to)
             {
                 return BadRequest("Invalid params 'from' or 'to'.");
             }
@@ -49,21 +48,22 @@ namespace API.Controllers
                 return NotFound();
             }
 
-            return Ok(GetOperationsResult(operations));
+            return Ok(GetOperationReport(operations));
         }
 
-        private dynamic GetOperationsResult(IQueryable<Operation> operations)
+        private OperationReport GetOperationReport(IQueryable<Operation> operations)
         {
             decimal income = operations.Where(op => op.IsIncome).Sum(op => op.Amount);
             decimal expenses = operations.Where(op => !op.IsIncome).Sum(op => op.Amount);
 
-            var result = new
+            var report = new OperationReport()
             {
                 Income = income,
                 Expenses = expenses,
                 Operations = operations
             };
-            return result;
+
+            return report;
         }
     }
 }

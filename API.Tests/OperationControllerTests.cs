@@ -12,20 +12,12 @@ using System.Linq;
 namespace API.Tests
 {
     public class OperationControllerTests
-    {
-        public OperationController GetController(IUnitOfWork unitOfWork) => 
-            new OperationController(unitOfWork);
-        
-        public UnitOfWorkFake GetUnitOfWork() => 
-            new UnitOfWorkFake(TestData.Operations, TestData.Categories);
-
-       
-
+    {     
         [Test]
         public void GetAll_WhenCalled_ReturnsOkResult()
         {
-            var unitOfWork = GetUnitOfWork();
-            var controller = GetController(unitOfWork);
+            var unitOfWork = new UnitOfWorkFake(new TestData());
+            var controller = new OperationController(unitOfWork);
 
             var actionResult = controller.GetAll();
             
@@ -35,28 +27,23 @@ namespace API.Tests
         [Test]
         public void GetAll_WhenCalled_ReturnsAllOperations()
         {
-            var unitOfWork = GetUnitOfWork();
-            var controller = GetController(unitOfWork);
+            var unitOfWork = new UnitOfWorkFake(new TestData());
+            var controller = new OperationController(unitOfWork);
 
             var actionResult = controller.GetAll();
             var data = (actionResult as OkObjectResult).Value;
             var collection = data as IEnumerable<Operation>;
-            
-            var expected = TestData.Operations;
 
-            Assert.AreEqual(expected.Count, collection.Count());
-            Assert.AreEqual(expected.First().Amount, collection.First().Amount);
+            Assert.AreEqual(12, collection.Count());            
         }
 
         [Test]
         public void Get_PassedExistId_ReturnsOkResult()
         {
-            var unitOfWork = GetUnitOfWork();
-            var controller = GetController(unitOfWork);
+            var unitOfWork = new UnitOfWorkFake(new TestData());
+            var controller = new OperationController(unitOfWork);
 
-            var operation = TestData.Operations.Last();
-
-            var actionResult = controller.Get(operation.Id).Result;
+            var actionResult = controller.Get(1).Result;
 
             Assert.IsInstanceOf<OkObjectResult>(actionResult);
         }
@@ -64,8 +51,8 @@ namespace API.Tests
         [Test]
         public void Get_PassedWithNotExistId_ReturnsNotFoundResult()
         {
-            var unitOfWork = GetUnitOfWork();
-            var controller = GetController(unitOfWork);
+            var unitOfWork = new UnitOfWorkFake(new TestData());
+            var controller = new OperationController(unitOfWork);
 
             var actionResult = controller.Get(int.MaxValue).Result;
 
@@ -75,10 +62,11 @@ namespace API.Tests
         [Test]
         public void Get_PassedWithExistId_ReturnsOperation()
         {
-            var unitOfWork = GetUnitOfWork();
-            var controller = GetController(unitOfWork);
+            var testdata = new TestData();
+            var unitOfWork = new UnitOfWorkFake(testdata);
+            var controller = new OperationController(unitOfWork);
 
-            var expected = TestData.Operations.Last();
+            var expected = testdata.Operations.First();
 
             var actionResult = controller.Get(expected.Id).Result;
             var data = (actionResult as OkObjectResult).Value;
@@ -95,8 +83,9 @@ namespace API.Tests
         [Test]
         public void Add_PassedValidObject_ReturnsCreatedResult()
         {
-            var unitOfWork = GetUnitOfWork();
-            var controller = GetController(unitOfWork);
+            var testdata = new TestData();
+            var unitOfWork = new UnitOfWorkFake(testdata);
+            var controller = new OperationController(unitOfWork);
 
             Operation op = new()
             {
@@ -104,7 +93,7 @@ namespace API.Tests
                 Date = DateTime.UtcNow,
                 Amount = 10m,
                 Description = "123",
-                CategoryId = TestData.Categories.First().Id,
+                CategoryId = testdata.Categories.First().Id,
                 IsIncome = false
             };
 
@@ -116,8 +105,9 @@ namespace API.Tests
         [Test]
         public void Add_PassedValidObject_AddedObjectToStorage()
         {
-            var unitOfWork = GetUnitOfWork();
-            var controller = GetController(unitOfWork);
+            var testdata = new TestData();
+            var unitOfWork = new UnitOfWorkFake(testdata);
+            var controller = new OperationController(unitOfWork);
 
             Operation expectedOp = new()
             {
@@ -125,7 +115,7 @@ namespace API.Tests
                 Date = DateTime.UtcNow,
                 Amount = 10m,
                 Description = "123",
-                CategoryId = TestData.Categories.First().Id,
+                CategoryId = testdata.Categories.First().Id,
                 IsIncome = false
             };
 
@@ -147,15 +137,16 @@ namespace API.Tests
         [Test]
         public void Add_PassedInvalidObjectWithoutDate_ReturnsBadRequest()
         {
-            var unitOfWork = GetUnitOfWork();
-            var controller = GetController(unitOfWork);
+            var testdata = new TestData();
+            var unitOfWork = new UnitOfWorkFake(testdata);
+            var controller = new OperationController(unitOfWork);
 
             Operation expectedOp = new()
             {
                 Id = 1000,                
                 Amount = 10m,
                 Description = "123",
-                CategoryId = TestData.Categories.First().Id,
+                CategoryId = testdata.Categories.First().Id,
                 IsIncome = false
             };
 
@@ -167,15 +158,16 @@ namespace API.Tests
         [Test]
         public void Add_PassedInvalidObjectWithoutAmout_ReturnsBadRequest()
         {
-            var unitOfWork = GetUnitOfWork();
-            var controller = GetController(unitOfWork);
+            var testdata = new TestData();
+            var unitOfWork = new UnitOfWorkFake(testdata);
+            var controller = new OperationController(unitOfWork);
 
             Operation expectedOp = new()
             {
                 Id = 1000,
                 Date = DateTime.UtcNow,                
                 Description = "123",
-                CategoryId = TestData.Categories.First().Id,
+                CategoryId = testdata.Categories.First().Id,
                 IsIncome = false
             };
 
@@ -187,8 +179,8 @@ namespace API.Tests
         [Test]
         public void Add_PassedInvalidObjectWithoutCategoryId_ReturnsBadRequest()
         {
-            var unitOfWork = GetUnitOfWork();
-            var controller = GetController(unitOfWork);
+            var unitOfWork = new UnitOfWorkFake(new TestData());
+            var controller = new OperationController(unitOfWork);
 
             Operation expectedOp = new()
             {
@@ -207,8 +199,8 @@ namespace API.Tests
         [Test]
         public void Add_PassedValidObjectWithNotExistCategoryId_ReturnsBadRequest()
         {
-            var unitOfWork = GetUnitOfWork();
-            var controller = GetController(unitOfWork);
+            var unitOfWork = new UnitOfWorkFake(new TestData());
+            var controller = new OperationController(unitOfWork);
 
             Operation expectedOp = new()
             {
@@ -228,10 +220,11 @@ namespace API.Tests
         [Test]
         public void Delete_PassedExistId_ReturnsNoContentResult()
         {
-            var unitOfWork = GetUnitOfWork();
-            var controller = GetController(unitOfWork);
+            var testdata = new TestData();
+            var unitOfWork = new UnitOfWorkFake(testdata);
+            var controller = new OperationController(unitOfWork);
 
-            var actionResult = controller.Delete(TestData.Operations.First().Id).Result;
+            var actionResult = controller.Delete(testdata.Operations.First().Id).Result;
 
             Assert.IsInstanceOf<NoContentResult>(actionResult);
         }
@@ -239,8 +232,8 @@ namespace API.Tests
         [Test]
         public void Delete_PassedNotExistId_ReturnsNotFoundResult()
         {
-            var unitOfWork = GetUnitOfWork();
-            var controller = GetController(unitOfWork);
+            var unitOfWork = new UnitOfWorkFake(new TestData());
+            var controller = new OperationController(unitOfWork);
 
             var actionResult = controller.Delete(int.MaxValue).Result;
 
@@ -250,12 +243,13 @@ namespace API.Tests
         [Test]
         public void Delete_PassedExistId_RemovedObjectFromStorage()
         {
-            var unitOfWork = GetUnitOfWork();
-            var controller = GetController(unitOfWork);
+            var testdata = new TestData();
+            var unitOfWork = new UnitOfWorkFake(testdata);
+            var controller = new OperationController(unitOfWork);
 
             var storageBeforeRemove = unitOfWork.Operations.GetAll().ToList();
 
-            var actionResult = controller.Delete(TestData.Operations.First().Id).Result;
+            var actionResult = controller.Delete(testdata.Operations.First().Id).Result;
 
             var storageAfterRemove = unitOfWork.Operations.GetAll().ToList();
 
@@ -265,10 +259,11 @@ namespace API.Tests
         [Test]
         public void Update_PassedValidRequest_ReturnsNoContentResult()
         {
-            var unitOfWork = GetUnitOfWork();
-            var controller = GetController(unitOfWork);
+            var testdata = new TestData();
+            var unitOfWork = new UnitOfWorkFake(testdata);
+            var controller = new OperationController(unitOfWork);
 
-            Operation editedOp = TestData.Operations.First();
+            Operation editedOp = testdata.Operations.First();
 
             var actionResult = controller.Update(editedOp.Id, editedOp).Result;
 
@@ -278,10 +273,11 @@ namespace API.Tests
         [Test]
         public void Update_PassedDifferentIdInRequestAndParam_ReturnsBadRequest()
         {
-            var unitOfWork = GetUnitOfWork();
-            var controller = GetController(unitOfWork);
+            var testdata = new TestData();
+            var unitOfWork = new UnitOfWorkFake(testdata);
+            var controller = new OperationController(unitOfWork);
 
-            Operation editedOp = TestData.Operations.First();
+            Operation editedOp = testdata.Operations.First();
 
             var actionResult = controller.Update(editedOp.Id + 1, editedOp).Result;
 
@@ -291,10 +287,11 @@ namespace API.Tests
         [Test]
         public void Update_PassedInvalidObjectWithoutDate_ReturnsBadRequest()
         {
-            var unitOfWork = GetUnitOfWork();
-            var controller = GetController(unitOfWork);
+            var testdata = new TestData();
+            var unitOfWork = new UnitOfWorkFake(testdata);
+            var controller = new OperationController(unitOfWork);
 
-            var op = TestData.Operations.First();
+            var op = testdata.Operations.First();
 
             Operation editedOp = new()
             {
@@ -313,10 +310,11 @@ namespace API.Tests
         [Test]
         public void Update_PassedInvalidObjectWithoutAmount_ReturnsBadRequest()
         {
-            var unitOfWork = GetUnitOfWork();
-            var controller = GetController(unitOfWork);
+            var testdata = new TestData();
+            var unitOfWork = new UnitOfWorkFake(testdata);
+            var controller = new OperationController(unitOfWork);
 
-            var op = TestData.Operations.First();
+            var op = testdata.Operations.First();
 
             Operation editedOp = new()
             {
@@ -335,10 +333,11 @@ namespace API.Tests
         [Test]
         public void Update_PassedInvalidObjectWithoutCategoryId_ReturnsBadRequest()
         {
-            var unitOfWork = GetUnitOfWork();
-            var controller = GetController(unitOfWork);
+            var testdata = new TestData();
+            var unitOfWork = new UnitOfWorkFake(testdata);
+            var controller = new OperationController(unitOfWork);
 
-            var op = TestData.Operations.First();
+            var op = testdata.Operations.First();
 
             Operation editedOp = new()
             {
@@ -357,10 +356,11 @@ namespace API.Tests
         [Test]
         public void Update_PassedInvalidObjectWithNotExistCategoryId_ReturnsBadRequest()
         {
-            var unitOfWork = GetUnitOfWork();
-            var controller = GetController(unitOfWork);
+            var testdata = new TestData();
+            var unitOfWork = new UnitOfWorkFake(testdata);
+            var controller = new OperationController(unitOfWork);
 
-            var op = TestData.Operations.First();
+            var op = testdata.Operations.First();
 
             Operation editedOp = new()
             {
@@ -380,8 +380,9 @@ namespace API.Tests
         [Test]
         public void Update_PassedValidObject_EditedObjectInStorage()
         {
-            var unitOfWork = GetUnitOfWork();
-            var controller = GetController(unitOfWork);
+            var testdata = new TestData();
+            var unitOfWork = new UnitOfWorkFake(testdata);
+            var controller = new OperationController(unitOfWork);
 
             var storageBeforeEdited = unitOfWork.Operations.GetAll().ToList();
 
@@ -393,7 +394,7 @@ namespace API.Tests
                 Date = oldOp.Date + TimeSpan.FromDays(1),
                 Amount = oldOp.Amount + 1,
                 Description = oldOp.Description += "string",
-                CategoryId = TestData.Categories.First( cat => cat.Id != oldOp.CategoryId).Id,
+                CategoryId = testdata.Categories.First( cat => cat.Id != oldOp.CategoryId).Id,
                 IsIncome = !oldOp.IsIncome
             };            
 

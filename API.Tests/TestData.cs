@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace API.Tests
 {
-    public static class TestData
+    public class TestData
     {
-        public static List<OperationCategory> Categories = new()
+        public List<OperationCategory> Categories = new()
         {
             new OperationCategory { Id = 1, Name = "Foodstuffs" },
             new OperationCategory { Id = 2, Name = "Rent" },
@@ -20,7 +20,7 @@ namespace API.Tests
             new OperationCategory { Id = 7, Name = "Present" },
         };
 
-        public static List<Operation> Operations = new()
+        public List<Operation> Operations = new()
         {
             new Operation { Id = 1, Amount = 10m, Date = new DateTime(2022, 2, 10), CategoryId = 1, IsIncome = false },
             new Operation { Id = 2, Amount = 2m, Date = new DateTime(2022, 2, 10), CategoryId = 3, IsIncome = false },
@@ -32,7 +32,6 @@ namespace API.Tests
             new Operation { Id = 8, Amount = 53m, Date = new DateTime(2022, 2, 7), CategoryId = 5, IsIncome = false },
             new Operation { Id = 9, Amount = 10m, Date = new DateTime(2022, 2, 7), CategoryId = 1, IsIncome = false },
             new Operation { Id = 10, Amount = 300m, Date = new DateTime(2022, 2, 6), CategoryId = 2, IsIncome = false },
-
             new Operation { Id = 11, Amount = 1000m, Date = new DateTime(2022, 2, 5), CategoryId = 6, IsIncome = true, Description = "salary!" },
             new Operation { Id = 12, Amount = 100m, Date = new DateTime(2022, 2, 5), CategoryId = 7, IsIncome = true, Description = "my friend returned the debt" }
         };
