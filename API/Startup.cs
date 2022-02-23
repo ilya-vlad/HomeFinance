@@ -27,7 +27,7 @@ namespace API
             services.AddDbContext<HomeFinanceContext>(options => options.UseSqlServer(connection));
 
             services.AddScoped<IUnitOfWork, UnitOfWork>();
-
+                        
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {

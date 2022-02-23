@@ -2,15 +2,17 @@
 using DataAccess;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace API.Controllers
 {   
-    public class OperationController : GenericController
+    public class OperationController : GenericController<OperationController>
     {
-        public OperationController(IUnitOfWork unitOfWork) : base(unitOfWork)
+        public OperationController(IUnitOfWork unitOfWork, ILogger<OperationController> logger) 
+            : base(unitOfWork, logger)
         {
 
         }
@@ -24,53 +26,45 @@ namespace API.Controllers
 
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(int id)
-        {
+        {            
             var result = await _unitOfWork.Operations.GetByIdAsync(id);
 
-            if(result == null)
+            if (result == null)
             {
                 return NotFound();
             }
 
-            return Ok(result);
+            return Ok(result);                    
         }
 
         [HttpPost]
         public async Task<IActionResult> Add(Operation newOperation)
-        {
-            try
-            {   
-                var IsValidOperation = await IsValidOperationAsync(newOperation).ConfigureAwait(false);
+        {              
+            var IsValidOperation = await IsValidOperationAsync(newOperation).ConfigureAwait(false);
 
-                if (!IsValidOperation)
-                {
-                    return BadRequest(ModelState);
-                }
-
-                var entity = new Operation
-                {
-                    Date = newOperation.Date,
-                    Amount = newOperation.Amount,
-                    CategoryId = newOperation.CategoryId,
-                    IsIncome = newOperation.IsIncome,
-                    Description = newOperation.Description
-                };
-
-                await _unitOfWork.Operations.AddAsync(entity);
-                await _unitOfWork.SaveAsync();
-
-                return CreatedAtAction(nameof(Get), new { id = entity.Id }, entity);
-            }
-            catch (Exception)
+            if (!IsValidOperation)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError,
-                    "Error");
+                return BadRequest(ModelState);
             }
+
+            var entity = new Operation
+            {
+                Date = newOperation.Date,
+                Amount = newOperation.Amount,
+                CategoryId = newOperation.CategoryId,
+                IsIncome = newOperation.IsIncome,
+                Description = newOperation.Description
+            };
+
+            await _unitOfWork.Operations.AddAsync(entity);
+            await _unitOfWork.SaveAsync();
+
+            return CreatedAtAction(nameof(Get), new { id = entity.Id }, entity);            
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
-        {
+        {            
             var entity = await _unitOfWork.Operations.GetByIdAsync(id);
 
             if (entity == null)
@@ -81,12 +75,12 @@ namespace API.Controllers
             await _unitOfWork.Operations.DeleteAsync(entity.Id);
             await _unitOfWork.SaveAsync();
 
-            return NoContent();
+            return NoContent();  
         }
 
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(int id, Operation operation)
-        {
+        {            
             var IsValidOperation = await IsValidOperationAsync(operation).ConfigureAwait(false);
 
             if (id != operation.Id || !IsValidOperation)
@@ -109,10 +103,8 @@ namespace API.Controllers
             _unitOfWork.Operations.Update(entity);
             await _unitOfWork.SaveAsync();
 
-            return NoContent();
+            return NoContent();                     
         }
-
-
 
         private async Task<bool> IsValidOperationAsync(Operation operation)
         {

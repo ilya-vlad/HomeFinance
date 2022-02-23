@@ -3,6 +3,7 @@ using Common.Models;
 using DataAccess;
 using DataAccess.Repositories;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using System;
@@ -17,7 +18,9 @@ namespace API.Tests
         public void GetAll_WhenCalled_ReturnsOkResult()
         {
             var unitOfWork = new UnitOfWorkFake(new TestData());
-            var controller = new OperationController(unitOfWork);
+            var loggerMock = new Mock<ILogger<OperationController>>();
+            var logger = loggerMock.Object;
+            var controller = new OperationController(unitOfWork, logger);
 
             var actionResult = controller.GetAll();
             
@@ -28,7 +31,9 @@ namespace API.Tests
         public void GetAll_WhenCalled_ReturnsAllOperations()
         {
             var unitOfWork = new UnitOfWorkFake(new TestData());
-            var controller = new OperationController(unitOfWork);
+            var loggerMock = new Mock<ILogger<OperationController>>();
+            var logger = loggerMock.Object;
+            var controller = new OperationController(unitOfWork, logger);
 
             var actionResult = controller.GetAll();
             var data = (actionResult as OkObjectResult).Value;
@@ -41,7 +46,9 @@ namespace API.Tests
         public void Get_PassedExistId_ReturnsOkResult()
         {
             var unitOfWork = new UnitOfWorkFake(new TestData());
-            var controller = new OperationController(unitOfWork);
+            var loggerMock = new Mock<ILogger<OperationController>>();
+            var logger = loggerMock.Object;
+            var controller = new OperationController(unitOfWork, logger);
 
             var actionResult = controller.Get(1).Result;
 
@@ -52,7 +59,9 @@ namespace API.Tests
         public void Get_PassedWithNotExistId_ReturnsNotFoundResult()
         {
             var unitOfWork = new UnitOfWorkFake(new TestData());
-            var controller = new OperationController(unitOfWork);
+            var loggerMock = new Mock<ILogger<OperationController>>();
+            var logger = loggerMock.Object;
+            var controller = new OperationController(unitOfWork, logger);
 
             var actionResult = controller.Get(int.MaxValue).Result;
 
@@ -64,7 +73,9 @@ namespace API.Tests
         {
             var testdata = new TestData();
             var unitOfWork = new UnitOfWorkFake(testdata);
-            var controller = new OperationController(unitOfWork);
+            var loggerMock = new Mock<ILogger<OperationController>>();
+            var logger = loggerMock.Object;
+            var controller = new OperationController(unitOfWork, logger);
 
             var expected = testdata.Operations.First();
 
@@ -85,7 +96,9 @@ namespace API.Tests
         {
             var testdata = new TestData();
             var unitOfWork = new UnitOfWorkFake(testdata);
-            var controller = new OperationController(unitOfWork);
+            var loggerMock = new Mock<ILogger<OperationController>>();
+            var logger = loggerMock.Object;
+            var controller = new OperationController(unitOfWork, logger);
 
             Operation op = new()
             {
@@ -107,7 +120,9 @@ namespace API.Tests
         {
             var testdata = new TestData();
             var unitOfWork = new UnitOfWorkFake(testdata);
-            var controller = new OperationController(unitOfWork);
+            var loggerMock = new Mock<ILogger<OperationController>>();
+            var logger = loggerMock.Object;
+            var controller = new OperationController(unitOfWork, logger);
 
             Operation expectedOp = new()
             {
@@ -139,7 +154,9 @@ namespace API.Tests
         {
             var testdata = new TestData();
             var unitOfWork = new UnitOfWorkFake(testdata);
-            var controller = new OperationController(unitOfWork);
+            var loggerMock = new Mock<ILogger<OperationController>>();
+            var logger = loggerMock.Object;
+            var controller = new OperationController(unitOfWork, logger);
 
             Operation expectedOp = new()
             {
@@ -160,7 +177,9 @@ namespace API.Tests
         {
             var testdata = new TestData();
             var unitOfWork = new UnitOfWorkFake(testdata);
-            var controller = new OperationController(unitOfWork);
+            var loggerMock = new Mock<ILogger<OperationController>>();
+            var logger = loggerMock.Object;
+            var controller = new OperationController(unitOfWork, logger);
 
             Operation expectedOp = new()
             {
@@ -180,7 +199,9 @@ namespace API.Tests
         public void Add_PassedInvalidObjectWithoutCategoryId_ReturnsBadRequest()
         {
             var unitOfWork = new UnitOfWorkFake(new TestData());
-            var controller = new OperationController(unitOfWork);
+            var loggerMock = new Mock<ILogger<OperationController>>();
+            var logger = loggerMock.Object;
+            var controller = new OperationController(unitOfWork, logger);
 
             Operation expectedOp = new()
             {
@@ -200,7 +221,9 @@ namespace API.Tests
         public void Add_PassedValidObjectWithNotExistCategoryId_ReturnsBadRequest()
         {
             var unitOfWork = new UnitOfWorkFake(new TestData());
-            var controller = new OperationController(unitOfWork);
+            var loggerMock = new Mock<ILogger<OperationController>>();
+            var logger = loggerMock.Object;
+            var controller = new OperationController(unitOfWork, logger);
 
             Operation expectedOp = new()
             {
@@ -222,7 +245,9 @@ namespace API.Tests
         {
             var testdata = new TestData();
             var unitOfWork = new UnitOfWorkFake(testdata);
-            var controller = new OperationController(unitOfWork);
+            var loggerMock = new Mock<ILogger<OperationController>>();
+            var logger = loggerMock.Object;
+            var controller = new OperationController(unitOfWork, logger);
 
             var actionResult = controller.Delete(testdata.Operations.First().Id).Result;
 
@@ -233,7 +258,9 @@ namespace API.Tests
         public void Delete_PassedNotExistId_ReturnsNotFoundResult()
         {
             var unitOfWork = new UnitOfWorkFake(new TestData());
-            var controller = new OperationController(unitOfWork);
+            var loggerMock = new Mock<ILogger<OperationController>>();
+            var logger = loggerMock.Object;
+            var controller = new OperationController(unitOfWork, logger);
 
             var actionResult = controller.Delete(int.MaxValue).Result;
 
@@ -245,7 +272,9 @@ namespace API.Tests
         {
             var testdata = new TestData();
             var unitOfWork = new UnitOfWorkFake(testdata);
-            var controller = new OperationController(unitOfWork);
+            var loggerMock = new Mock<ILogger<OperationController>>();
+            var logger = loggerMock.Object;
+            var controller = new OperationController(unitOfWork, logger);
 
             var storageBeforeRemove = unitOfWork.Operations.GetAll().ToList();
 
@@ -261,7 +290,9 @@ namespace API.Tests
         {
             var testdata = new TestData();
             var unitOfWork = new UnitOfWorkFake(testdata);
-            var controller = new OperationController(unitOfWork);
+            var loggerMock = new Mock<ILogger<OperationController>>();
+            var logger = loggerMock.Object;
+            var controller = new OperationController(unitOfWork, logger);
 
             Operation editedOp = testdata.Operations.First();
 
@@ -275,7 +306,9 @@ namespace API.Tests
         {
             var testdata = new TestData();
             var unitOfWork = new UnitOfWorkFake(testdata);
-            var controller = new OperationController(unitOfWork);
+            var loggerMock = new Mock<ILogger<OperationController>>();
+            var logger = loggerMock.Object;
+            var controller = new OperationController(unitOfWork, logger);
 
             Operation editedOp = testdata.Operations.First();
 
@@ -289,7 +322,9 @@ namespace API.Tests
         {
             var testdata = new TestData();
             var unitOfWork = new UnitOfWorkFake(testdata);
-            var controller = new OperationController(unitOfWork);
+            var loggerMock = new Mock<ILogger<OperationController>>();
+            var logger = loggerMock.Object;
+            var controller = new OperationController(unitOfWork, logger);
 
             var op = testdata.Operations.First();
 
@@ -312,7 +347,9 @@ namespace API.Tests
         {
             var testdata = new TestData();
             var unitOfWork = new UnitOfWorkFake(testdata);
-            var controller = new OperationController(unitOfWork);
+            var loggerMock = new Mock<ILogger<OperationController>>();
+            var logger = loggerMock.Object;
+            var controller = new OperationController(unitOfWork, logger);
 
             var op = testdata.Operations.First();
 
@@ -335,7 +372,9 @@ namespace API.Tests
         {
             var testdata = new TestData();
             var unitOfWork = new UnitOfWorkFake(testdata);
-            var controller = new OperationController(unitOfWork);
+            var loggerMock = new Mock<ILogger<OperationController>>();
+            var logger = loggerMock.Object;
+            var controller = new OperationController(unitOfWork, logger);
 
             var op = testdata.Operations.First();
 
@@ -358,7 +397,9 @@ namespace API.Tests
         {
             var testdata = new TestData();
             var unitOfWork = new UnitOfWorkFake(testdata);
-            var controller = new OperationController(unitOfWork);
+            var loggerMock = new Mock<ILogger<OperationController>>();
+            var logger = loggerMock.Object;
+            var controller = new OperationController(unitOfWork, logger);
 
             var op = testdata.Operations.First();
 
@@ -382,7 +423,9 @@ namespace API.Tests
         {
             var testdata = new TestData();
             var unitOfWork = new UnitOfWorkFake(testdata);
-            var controller = new OperationController(unitOfWork);
+            var loggerMock = new Mock<ILogger<OperationController>>();
+            var logger = loggerMock.Object;
+            var controller = new OperationController(unitOfWork, logger);
 
             var storageBeforeEdited = unitOfWork.Operations.GetAll().ToList();
 

@@ -1,14 +1,16 @@
 ﻿using Common.Models;
 using DataAccess;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Linq;
 
 namespace API.Controllers
 {      
-    public class ReportController : GenericController
+    public class ReportController : GenericController<ReportController>
     {
-        public ReportController(IUnitOfWork unitOfWork) : base(unitOfWork)
+        public ReportController(IUnitOfWork unitOfWork, ILogger<ReportController> logger) 
+            : base(unitOfWork, logger)
         {
 
         }
@@ -52,9 +54,21 @@ namespace API.Controllers
         }
 
         private OperationReport GetOperationReport(IQueryable<Operation> operations)
-        {
-            decimal income = operations.Where(op => op.IsIncome).Sum(op => op.Amount);
-            decimal expenses = operations.Where(op => !op.IsIncome).Sum(op => op.Amount);
+        {            
+            decimal income = 0;
+            decimal expenses = 0;
+
+            foreach(var op in operations)
+            {
+                if (op.IsIncome)
+                {
+                    income += op.Amount;
+                }
+                else
+                {
+                    expenses += op.Amount;
+                }
+            }
 
             var report = new OperationReport()
             {

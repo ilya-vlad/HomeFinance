@@ -2,6 +2,7 @@
 using Common.Models;
 using DataAccess;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using System;
@@ -16,7 +17,9 @@ namespace API.Tests
         public void GetDailyOperations_PassedEmptyDateAndStorageIsNOTContainsTodayOperations_ReturnsNotFoundResult()
         {
             var unitOfWork = new UnitOfWorkFake(new TestData());
-            var controller = new ReportController(unitOfWork);
+            var loggerMock = new Mock<ILogger<ReportController>>();
+            var logger = loggerMock.Object;
+            var controller = new ReportController(unitOfWork, logger);
 
             var actionResult = controller.GetDailyOperations(default);
 
@@ -27,7 +30,9 @@ namespace API.Tests
         public void GetDailyOperations_PassedEmptyDateAndStorageIsContainsTodayOperations_ReturnsOkResult()
         {
             var unitOfWork = new UnitOfWorkFake(new TestData());
-            var controller = new ReportController(unitOfWork);
+            var loggerMock = new Mock<ILogger<ReportController>>();
+            var logger = loggerMock.Object;
+            var controller = new ReportController(unitOfWork, logger);
 
             var op = unitOfWork.Operations.GetAll().First();
             op.Date = DateTime.Now;
@@ -41,7 +46,9 @@ namespace API.Tests
         public void GetDailyOperations_PassedEmptyDateAndStorageIsContainsTodayOperations_ReturnsReportOperation()
         {
             var unitOfWork = new UnitOfWorkFake(new TestData());
-            var controller = new ReportController(unitOfWork);
+            var loggerMock = new Mock<ILogger<ReportController>>();
+            var logger = loggerMock.Object;
+            var controller = new ReportController(unitOfWork, logger);
 
             var op1 = new Operation { Amount = 10, Date = DateTime.Now, IsIncome = false };
             var op2 = new Operation { Amount = 15, Date = DateTime.Now, IsIncome = false };
@@ -65,7 +72,9 @@ namespace API.Tests
         public void GetDailyOperations_PassedValidDateAndStorageIsContainsTodayOperations_ReturnsReportOperation()
         {
             var unitOfWork = new UnitOfWorkFake(new TestData());
-            var controller = new ReportController(unitOfWork);
+            var loggerMock = new Mock<ILogger<ReportController>>();
+            var logger = loggerMock.Object;
+            var controller = new ReportController(unitOfWork, logger);
 
             var op1 = new Operation { Amount = 10, Date = new DateTime(2000, 1, 1), IsIncome = false };
             var op2 = new Operation { Amount = 15, Date = new DateTime(2000, 1, 1), IsIncome = false };
@@ -89,7 +98,9 @@ namespace API.Tests
         public void GetDailyOperations_PassedValidDateAndStorageIsNOTContainsTodayOperations_ReturnsNotFoundResult()
         {
             var unitOfWork = new UnitOfWorkFake(new TestData());
-            var controller = new ReportController(unitOfWork);
+            var loggerMock = new Mock<ILogger<ReportController>>();
+            var logger = loggerMock.Object;
+            var controller = new ReportController(unitOfWork, logger);
 
             var actionResult = controller.GetDailyOperations(new DateTime(2000, 1, 1));            
 
@@ -100,7 +111,9 @@ namespace API.Tests
         public void GetRangeOperations_PassedEmptyParams_ReturnsBadRequest()
         {
             var unitOfWork = new UnitOfWorkFake(new TestData());
-            var controller = new ReportController(unitOfWork);
+            var loggerMock = new Mock<ILogger<ReportController>>();
+            var logger = loggerMock.Object;
+            var controller = new ReportController(unitOfWork, logger);
 
             var actionResult = controller.GetRangeOperations(default, default);
 
@@ -111,7 +124,9 @@ namespace API.Tests
         public void GetRangeOperations_PassedEmptyFirstParam_ReturnsBadRequest()
         {
             var unitOfWork = new UnitOfWorkFake(new TestData());
-            var controller = new ReportController(unitOfWork);
+            var loggerMock = new Mock<ILogger<ReportController>>();
+            var logger = loggerMock.Object;
+            var controller = new ReportController(unitOfWork, logger);
 
             var actionResult = controller.GetRangeOperations(default, DateTime.UtcNow);
 
@@ -122,7 +137,9 @@ namespace API.Tests
         public void GetRangeOperations_PassedEmptySecondParam_ReturnsBadRequest()
         {
             var unitOfWork = new UnitOfWorkFake(new TestData());
-            var controller = new ReportController(unitOfWork);
+            var loggerMock = new Mock<ILogger<ReportController>>();
+            var logger = loggerMock.Object;
+            var controller = new ReportController(unitOfWork, logger);
 
             var actionResult = controller.GetRangeOperations(DateTime.UtcNow, default);
 
@@ -133,7 +150,9 @@ namespace API.Tests
         public void GetRangeOperations_PassedFirstParamBiggerThanSecondParam_ReturnsBadRequest()
         {
             var unitOfWork = new UnitOfWorkFake(new TestData());
-            var controller = new ReportController(unitOfWork);
+            var loggerMock = new Mock<ILogger<ReportController>>();
+            var logger = loggerMock.Object;
+            var controller = new ReportController(unitOfWork, logger);
 
             var actionResult = controller
                 .GetRangeOperations(DateTime.UtcNow + TimeSpan.FromDays(1), DateTime.UtcNow);
@@ -145,7 +164,9 @@ namespace API.Tests
         public void GetRangeOperations_PassedValidParamsAndStorageIsContainsOperations_ReturnsReportOperation()
         {
             var unitOfWork = new UnitOfWorkFake(new TestData());
-            var controller = new ReportController(unitOfWork);
+            var loggerMock = new Mock<ILogger<ReportController>>();
+            var logger = loggerMock.Object;
+            var controller = new ReportController(unitOfWork, logger);
 
             var op1 = new Operation { Amount = 10, Date = new DateTime(2000, 1, 1), IsIncome = false };
             var op2 = new Operation { Amount = 15, Date = new DateTime(2000, 1, 2), IsIncome = false };

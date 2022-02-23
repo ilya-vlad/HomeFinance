@@ -1,21 +1,23 @@
 ﻿using Common.Models;
 using DataAccess;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace API.Controllers
 {
-    public class CategoryController : GenericController
+    public class CategoryController : GenericController<CategoryController>
     {
-        public CategoryController(IUnitOfWork unitOfWork) : base(unitOfWork)
+        public CategoryController(IUnitOfWork unitOfWork, ILogger<CategoryController> logger) 
+            : base(unitOfWork, logger)
         {
 
         }
 
         [HttpGet]
         public IActionResult GetAll()
-        {
+        {            
             var result = _unitOfWork.Categories.GetAll();
             return Ok(result);
         }
